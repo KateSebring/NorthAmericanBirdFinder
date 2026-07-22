@@ -48,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: WrapAlignment.center,
                 runAlignment: WrapAlignment.center,
                 spacing: 20.0,
+                runSpacing: 10.0,
                 children: [
                   DropdownButton(
                     value: regionOptions.first,
@@ -88,6 +89,73 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 10.0),
+              itemCount: 5,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  leading: Text(
+                    style: TextStyle(
+                      fontSize: 20.0,
+                    ),
+                    '🐦'
+                  ),
+                  title: Text('Common Name'),
+                  subtitle: Text(
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                    ),
+                    'Scientific Name',
+                  ),
+                );
+              }
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10.0),
+            color: Colors.purple[800],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 40.0,
+              children: [
+                Row(
+                  spacing: 10.0,
+                  children: [
+                    Icon(
+                      size: 22.0,
+                      color: Colors.white,
+                      Icons.home,
+                    ),
+                    Text(
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22.0
+                      ),
+                      'Home'
+                    ),
+                  ],
+                ),
+                Row(
+                  spacing: 10.0,
+                  children: [
+                    Icon(
+                      size: 22.0,
+                      color: Colors.white,
+                      Icons.remove_red_eye,
+                    ),
+                    Text(
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22.0
+                      ),
+                      'My Sightings'
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
