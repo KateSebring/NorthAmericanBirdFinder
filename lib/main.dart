@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'North American Bird Finder',
       home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -33,43 +34,59 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('North American Bird Finder'),
-        backgroundColor: Colors.deepPurple[800],
+        backgroundColor: Colors.purple[800],
         foregroundColor: Colors.white,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              DropdownButton(
-                items: regionOptions.map((String region) {
-                  return DropdownMenuItem<String>(
-                    value: region,
-                    child: Text(region),
-                  );
-                }).toList(), 
-                onChanged: (value) {
-                  // do something
-                }
+          Padding(
+            padding: EdgeInsets.only(left: 20.0, top: 20.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                runAlignment: WrapAlignment.center,
+                spacing: 20.0,
+                children: [
+                  DropdownButton(
+                    value: regionOptions.first,
+                    items: regionOptions.map((String region) {
+                      return DropdownMenuItem<String>(
+                        value: region,
+                        child: Text(region),
+                      );
+                    }).toList(), 
+                    onChanged: (value) {
+                      // do something
+                    }
+                  ),
+                  DropdownButton(
+                    value: subregionOptions.first,
+                    items: subregionOptions.map((String subregion) {
+                      return DropdownMenuItem<String>(
+                        value: subregion,
+                        child: Text(subregion),
+                      );
+                    }).toList(), 
+                    onChanged: (value) {
+                      // do something
+                    }
+                  ),
+                  SearchBar(
+                    hintText: 'Search by name...',
+                    leading: Icon(Icons.search),
+                    constraints: BoxConstraints(
+                      maxWidth: 300.0,
+                      minHeight: 50.0,
+                    ),
+                    onChanged: (value) {
+                      // do something
+                    },
+                  ),
+                ],
               ),
-              DropdownButton(
-                items: subregionOptions.map((String subregion) {
-                  return DropdownMenuItem<String>(
-                    value: subregion,
-                    child: Text(subregion),
-                  );
-                }).toList(), 
-                onChanged: (value) {
-                  // do something
-                }
-              ),
-              SearchBar(
-                hintText: 'Search by name...',
-                leading: Icon(Icons.search),
-                onChanged: (value) {
-                  // do something
-                },
-              ),
-            ],
+            ),
           ),
         ],
       ),
