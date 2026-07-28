@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,22 +14,32 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'North American Bird Finder',
-      home: HomeScreen(),
+      home: BirdListScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class BirdListScreen extends StatefulWidget {
+  const BirdListScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<BirdListScreen> createState() => _BirdListScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  List<String> regionOptions = ['CA', 'US', 'MX'];
-  List<String> subregionOptions = ['Alaska', 'Another option', 'etc'];
+class _BirdListScreenState extends State<BirdListScreen> {
+  late Future<List<dynamic>> _birdData;
+
+  Future<List<dynamic>> loadBirdData(BuildContext context) async {
+    final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/bird_data.json');
+    return jsonDecode(jsonString);
+  }
+
+  @override
+  void initState() {
+    _birdData = loadBirdData(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,72 +56,57 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(left: 20.0, top: 20.0),
             child: SizedBox(
               width: double.infinity,
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                runAlignment: WrapAlignment.center,
-                spacing: 20.0,
-                runSpacing: 10.0,
-                children: [
-                  DropdownButton(
-                    value: regionOptions.first,
-                    items: regionOptions.map((String region) {
-                      return DropdownMenuItem<String>(
-                        value: region,
-                        child: Text(region),
-                      );
-                    }).toList(), 
-                    onChanged: (value) {
-                      // do something
-                    }
-                  ),
-                  DropdownButton(
-                    value: subregionOptions.first,
-                    items: subregionOptions.map((String subregion) {
-                      return DropdownMenuItem<String>(
-                        value: subregion,
-                        child: Text(subregion),
-                      );
-                    }).toList(), 
-                    onChanged: (value) {
-                      // do something
-                    }
-                  ),
-                  SearchBar(
-                    hintText: 'Search by name...',
-                    leading: Icon(Icons.search),
-                    constraints: BoxConstraints(
-                      maxWidth: 300.0,
-                      minHeight: 50.0,
-                    ),
-                    onChanged: (value) {
-                      // do something
-                    },
-                  ),
-                ],
+              child: SearchBar(
+                hintText: 'Search by name...',
+                leading: Icon(Icons.search),
+                constraints: BoxConstraints(
+                  maxWidth: 300.0,
+                  minHeight: 50.0,
+                ),
+                onChanged: (value) {
+                  // do something
+                },
               ),
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(top: 10.0),
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: Text(
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
-                    '🐦'
-                  ),
-                  title: Text('Common Name'),
-                  subtitle: Text(
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                    ),
-                    'Scientific Name',
-                  ),
-                );
-              }
+            child: FutureBuilder<List<dynamic>> (
+              future: _birdData, 
+              builder: (
+                (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if(snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+
+                  final birds = snapshot.data ?? [];
+
+                  return ListView.builder(
+                    itemCount: birds.length,
+                    itemBuilder: ((context, index) {
+                      final bird = birds[index];
+                      return ListTile(
+                        leading: Text(
+                          style: TextStyle(
+                            fontSize: 20.0,
+                          ),
+                          '🐦'
+                        ),
+                        title: Text(bird['common_name'] ?? 'Unknown Common Name'),
+                        subtitle: Text(
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                          ),
+                          bird['species'] ?? 'Unknown Scientific Name'
+                        ),
+                      );
+                    }),
+                  );
+                }
+              ),
             ),
           ),
           Container(
