@@ -1,6 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import './bird_page.dart';
+import './bird.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,11 +29,13 @@ class BirdListScreen extends StatefulWidget {
 }
 
 class _BirdListScreenState extends State<BirdListScreen> {
-  late Future<List<dynamic>> _birdData;
+  late Future<List<Bird>> _birdData;
 
-  Future<List<dynamic>> loadBirdData(BuildContext context) async {
+  Future<List<Bird>> loadBirdData(BuildContext context) async {
     final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/bird_data.json');
-    return jsonDecode(jsonString);
+    final List<dynamic> jsonList = jsonDecode(jsonString);
+
+    return jsonList.map((json) => Bird.fromJson(json)).toList();
   }
 
   @override
@@ -70,7 +73,7 @@ class _BirdListScreenState extends State<BirdListScreen> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<dynamic>> (
+            child: FutureBuilder<List<Bird>> (
               future: _birdData, 
               builder: (
                 (context, snapshot) {
@@ -95,13 +98,21 @@ class _BirdListScreenState extends State<BirdListScreen> {
                           ),
                           '🐦'
                         ),
-                        title: Text(bird['common_name'] ?? 'Unknown Common Name'),
+                        title: Text(bird.commonName),
                         subtitle: Text(
                           style: TextStyle(
                             fontStyle: FontStyle.italic,
                           ),
-                          bird['species'] ?? 'Unknown Scientific Name'
+                          bird.species
                         ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => IndividualBirdScreen(bird: birds[index]),
+                            ),
+                          );
+                        },
                       );
                     }),
                   );
