@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import './bird.dart';
-import './bird_details.dart';
+import 'models/bird.dart';
+import 'models/bird_details.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class IndividualBirdScreen extends StatefulWidget {
