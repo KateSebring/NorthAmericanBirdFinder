@@ -30,6 +30,7 @@ class BirdListScreen extends StatefulWidget {
 
 class _BirdListScreenState extends State<BirdListScreen> {
   late Future<List<Bird>> _birdData;
+  String _searchQuery = '';
 
   Future<List<Bird>> loadBirdData(BuildContext context) async {
     final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/bird_data.json');
@@ -67,6 +68,9 @@ class _BirdListScreenState extends State<BirdListScreen> {
                   minHeight: 50.0,
                 ),
                 onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
                   // do something
                 },
               ),
@@ -85,12 +89,18 @@ class _BirdListScreenState extends State<BirdListScreen> {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   }
 
-                  final birds = snapshot.data ?? [];
+                  final List<Bird> filteredBirds;
+
+                  if(_searchQuery.isEmpty) {
+                    filteredBirds = snapshot.data ?? [];
+                  } else {
+                    filteredBirds = snapshot.data?.where((bird) => bird.commonName.toLowerCase().contains(_searchQuery.toLowerCase()) || bird.species.toLowerCase().contains(_searchQuery.toLowerCase()) ).toList() ?? [];
+                  }
 
                   return ListView.builder(
-                    itemCount: birds.length,
+                    itemCount: filteredBirds.length,
                     itemBuilder: ((context, index) {
-                      final bird = birds[index];
+                      final bird = filteredBirds[index];
                       return ListTile(
                         leading: Text(
                           style: TextStyle(
@@ -109,7 +119,7 @@ class _BirdListScreenState extends State<BirdListScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => IndividualBirdScreen(bird: birds[index]),
+                              builder: (context) => IndividualBirdScreen(bird: filteredBirds[index]),
                             ),
                           );
                         },
