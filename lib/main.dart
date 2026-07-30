@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import './bird_page.dart';
-import './bird.dart';
+import 'models/bird.dart';
 
 void main() {
   runApp(const MyApp());
