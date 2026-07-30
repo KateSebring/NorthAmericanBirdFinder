@@ -126,12 +126,13 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
                       imageUrl: details.imageUrl!,
                       height: 250,
                       fit: BoxFit.cover,
-                      placeholder: ((context, url) => 
-                      SizedBox(
-                        height: 40.0,
-                        width: 40.0,
-                        child: const CircularProgressIndicator(),
-                      )),
+                      placeholder: ((context, url) => const Center(
+                        child: SizedBox(
+                          height: 40.0,
+                          width: 40.0,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ))
                     )
                   else
                     const Text('No image available'),

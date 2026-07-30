@@ -17,7 +17,7 @@ class FooterWidget extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: ((context) => isOnHomePage ? const MySightingsScreen() : const BirdListScreen())));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => isOnHomePage ? const MySightingsScreen() : const BirdListScreen())));
             },
             child: isOnHomePage ? 
             Row(
