@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lab3/bird_list.dart';
-import 'package:lab3/my_sightings.dart';
+import 'package:lab3/screens/bird_list.dart';
+import 'package:lab3/screens/my_sightings.dart';
 
 class FooterWidget extends StatelessWidget {
   final bool isOnHomePage;

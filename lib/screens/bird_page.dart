@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'models/bird.dart';
-import 'models/bird_details.dart';
+import '../models/bird.dart';
+import '../models/bird_details.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class IndividualBirdScreen extends StatefulWidget {
@@ -168,7 +168,16 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
+                    padding: EdgeInsets.only(top: 20.0,),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      
+                    }, 
+                    child: Text('Add to My Sightings')
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 20.0, left: 40.0, right: 40.0),
                     child: Text(
                       details.description ?? 'No description available.',
                     ),

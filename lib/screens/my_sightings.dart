@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lab3/footer.dart';
-import './models/sighting.dart';
+import 'package:lab3/widgets/footer.dart';
+import '../models/sighting.dart';
 
 class MySightingsScreen extends StatefulWidget {
   const MySightingsScreen({super.key});
