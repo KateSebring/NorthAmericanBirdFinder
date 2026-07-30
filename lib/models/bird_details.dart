@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:lab3/bird.dart';
+import 'package:lab3/models/bird.dart';
 
 class BirdDetails {
   final Bird bird;
