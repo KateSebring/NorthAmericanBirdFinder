@@ -13,5 +13,6 @@ class SightingsProvider with ChangeNotifier {
 
   void removeSighting(Sighting sighting) {
     _mySightings.remove(sighting);
+    notifyListeners();
   }
 }
