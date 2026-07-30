@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lab3/models/sighting.dart';
+import 'package:lab3/sightings_provider.dart';
+import 'package:provider/provider.dart';
 import '../models/bird.dart';
 import '../models/bird_details.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -172,7 +175,7 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      
+                      _showSightingDialog(context);
                     }, 
                     child: Text('Add to My Sightings')
                   ),
@@ -188,6 +191,54 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
           );
         }
       ),
+    );
+  }
+  
+  void _showSightingDialog(BuildContext context) {
+    showDialog(
+      context: context, 
+      builder: (BuildContext context) {
+        TextEditingController txtLocation = TextEditingController();
+        TextEditingController txtDate = TextEditingController();
+        return AlertDialog(
+          title: Text('Log Sighting for ${widget.bird.commonName}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: txtLocation,
+                decoration: InputDecoration(
+                  labelText: 'Location Sighted',
+                ),
+              ),
+              TextField(
+                controller: txtDate,
+                decoration: InputDecoration(
+                  labelText: 'Date Sighted',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                String location = txtLocation.text;
+                String date = txtDate.text;
+                Sighting newSighting = Sighting(commonName: widget.bird.commonName, species: widget.bird.species, location: location, date: date);
+                Provider.of<SightingsProvider>(context, listen: false).addSighting(newSighting);
+                Navigator.pop(context);
+              }, 
+              child: Text('Save'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              }, 
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      }
     );
   }
 }
