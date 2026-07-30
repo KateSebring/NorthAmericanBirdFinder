@@ -1,4 +1,4 @@
-# lab3
+# North American Bird Finder
 
 A new Flutter project.
 
