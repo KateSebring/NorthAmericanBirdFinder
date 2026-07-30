@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lab3/sightings_provider.dart';
 import 'package:lab3/widgets/footer.dart';
-import '../models/sighting.dart';
+import 'package:provider/provider.dart';
 
-class MySightingsScreen extends StatefulWidget {
+class MySightingsScreen extends StatelessWidget {
   const MySightingsScreen({super.key});
 
-  @override
-  State<MySightingsScreen> createState() => _MySightingsScreenState();
-}
-
-class _MySightingsScreenState extends State<MySightingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,17 +19,36 @@ class _MySightingsScreenState extends State<MySightingsScreen> {
         children: [
           // list birds in sightings list
           // add ability to swipe out
-          Expanded(
-            child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Text('🪶'),
-                  title: Text('Common Name | Scientific Name'),
-                  subtitle: Text('Location'),
+          Consumer<SightingsProvider>(
+            builder: (context, sightingsData, child) {
+              if(sightingsData.mySightings.isEmpty) {
+                return Center(
+                  child: Expanded(
+                    child: Text('No sightings found.')
+                  ),
                 );
               }
-            ),
+
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: sightingsData.mySightings.length,
+                  itemBuilder: ((context, index) {
+                    final sighting = sightingsData.mySightings[index];
+                    return Dismissible(
+                      key: ValueKey('${sighting.species}_$index'),
+                      onDismissed: (direction) {
+                        sightingsData.removeSighting(sighting);
+                      },
+                      child: ListTile(
+                        leading: Text('🪶'),
+                        title: Text('${sighting.commonName} | ${sighting.species}'),
+                        subtitle: Text('Seen ${sighting.date} | Location: ${sighting.location}'),
+                      ),
+                    );
+                  })
+                )
+              );
+            },
           ),
           FooterWidget(isOnHomePage: false),
         ],
