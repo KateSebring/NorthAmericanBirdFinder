@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lab3/bird_list.dart';
+import 'package:lab3/screens/bird_list.dart';
 
 void main() {
   runApp(const MyApp());

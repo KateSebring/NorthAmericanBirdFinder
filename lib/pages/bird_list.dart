@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:lab3/bird_page.dart';
-import 'package:lab3/footer.dart';
+import 'package:lab3/screens/bird_page.dart';
+import 'package:lab3/widgets/footer.dart';
 import 'package:lab3/models/bird.dart';
 
 class BirdListScreen extends StatefulWidget {
