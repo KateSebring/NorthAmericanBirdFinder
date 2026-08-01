@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:lab3/models/bird.dart';
-import 'package:lab3/models/bird_details.dart';
 import 'package:lab3/screens/bird_page.dart';
 import 'package:lab3/sightings_provider.dart';
 import 'package:lab3/widgets/footer.dart';
