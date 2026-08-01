@@ -7,14 +7,9 @@ import 'package:lab3/sightings_provider.dart';
 import 'package:lab3/widgets/footer.dart';
 import 'package:provider/provider.dart';
 
-class MySightingsScreen extends StatefulWidget {
+class MySightingsScreen extends StatelessWidget {
   const MySightingsScreen({super.key});
 
-  @override
-  State<MySightingsScreen> createState() => _MySightingsScreenState();
-}
-
-class _MySightingsScreenState extends State<MySightingsScreen> {
   Future<List<dynamic>> _loadBirdData(BuildContext context) async {
     final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/bird_data.json');
     return jsonDecode(jsonString);
@@ -114,7 +109,10 @@ class _MySightingsScreenState extends State<MySightingsScreen> {
                                             String newLocation = txtLocation.text;
                                             String newDate = txtDate.text;
                                             final newSighting = Sighting(
-                                              commonName: sighting.commonName, species: sighting.species, location: newLocation, date: newDate
+                                              commonName: sighting.commonName, 
+                                              species: sighting.species, 
+                                              location: newLocation, 
+                                              date: newDate,
                                             );
                                             Navigator.of(context).pop(newSighting);
                                           }, 
@@ -132,11 +130,9 @@ class _MySightingsScreenState extends State<MySightingsScreen> {
                                     
                                   }
                                 );
-                                if(updatedSighting != null) {
-                                  setState(() {
-                                    sighting.location = updatedSighting.location;
-                                    sighting.date = updatedSighting.date;
-                                  });
+                                if(updatedSighting != null && context.mounted) {
+                                  Provider.of<SightingsProvider>(context, listen: false)
+                                    .updateSighting(index, updatedSighting);
                                 }
                               },
                             ),

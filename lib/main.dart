@@ -3,11 +3,19 @@ import 'package:lab3/screens/bird_list.dart';
 import 'package:lab3/sightings_provider.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(ChangeNotifierProvider(
-    create: (context) => SightingsProvider(),
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final sightingsProvider = SightingsProvider();
+
+  await sightingsProvider.init();
+
+  runApp(
+    ChangeNotifierProvider(
+    create: (_) => sightingsProvider,
     child: MyApp(),
-  ));
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {

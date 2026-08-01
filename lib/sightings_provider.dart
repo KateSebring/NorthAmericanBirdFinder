@@ -10,8 +10,10 @@ class SightingsProvider extends ChangeNotifier {
 
   List<Sighting> get mySightings => _mySightings;
 
-  SightingsProvider() {
-    _loadSightingsFromDisk();
+  SightingsProvider();
+
+  Future<void> init() async {
+    await _loadSightingsFromDisk();
   }
 
   Future<void> _loadSightingsFromDisk() async {
@@ -34,6 +36,8 @@ class SightingsProvider extends ChangeNotifier {
     final List<String> serializedList = _mySightings
       .map((sighting) => jsonEncode(sighting.toJson()))
       .toList();
+
+    await prefs.setStringList(_storageKey, serializedList);
   }
 
   void addSighting(Sighting newSighting) {
@@ -46,5 +50,13 @@ class SightingsProvider extends ChangeNotifier {
     _mySightings.remove(sighting);
     notifyListeners();
     _saveSightingsToDisk();
+  }
+
+  void updateSighting(int index, Sighting updatedSighting) {
+    if(index >= 0 && index < _mySightings.length) {
+      _mySightings[index] = updatedSighting;
+      notifyListeners();
+      _saveSightingsToDisk();
+    }
   }
 }
