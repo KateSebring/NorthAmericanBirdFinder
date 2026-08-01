@@ -1,10 +1,34 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:lab3/models/bird.dart';
+import 'package:lab3/models/bird_details.dart';
+import 'package:lab3/screens/bird_page.dart';
 import 'package:lab3/sightings_provider.dart';
 import 'package:lab3/widgets/footer.dart';
 import 'package:provider/provider.dart';
 
 class MySightingsScreen extends StatelessWidget {
   const MySightingsScreen({super.key});
+
+  Future<List<dynamic>> _loadBirdData(BuildContext context) async {
+    final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/bird_data.json');
+    return jsonDecode(jsonString);
+  }
+
+  Bird? findBirdInfo(List<dynamic> jsonList, String speciesToFind) {
+    try {
+      final birdMap = jsonList.firstWhere(
+        (element) => element['species'].toString().toLowerCase() == speciesToFind.toLowerCase()
+      );
+
+      if (birdMap == null) return null;
+
+      return Bird.fromJson(birdMap);
+    } catch (e) {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,36 +43,79 @@ class MySightingsScreen extends StatelessWidget {
         children: [
           // list birds in sightings list
           // add ability to swipe out
-          Consumer<SightingsProvider>(
-            builder: (context, sightingsData, child) {
-              if(sightingsData.mySightings.isEmpty) {
-                return Center(
-                  child: Expanded(
+          Expanded(
+            child: Consumer<SightingsProvider>(
+              builder: (context, sightingsData, child) {
+                if(sightingsData.mySightings.isEmpty) {
+                  return Center(
                     child: Text('No sightings found.')
-                  ),
-                );
-              }
+                  );
+                }
 
-              return Expanded(
-                child: ListView.builder(
-                  itemCount: sightingsData.mySightings.length,
-                  itemBuilder: ((context, index) {
-                    final sighting = sightingsData.mySightings[index];
-                    return Dismissible(
-                      key: ValueKey('${sighting.species}_$index'),
-                      onDismissed: (direction) {
-                        sightingsData.removeSighting(sighting);
-                      },
-                      child: ListTile(
-                        leading: Text('🪶'),
-                        title: Text('${sighting.commonName} | ${sighting.species}'),
-                        subtitle: Text('Seen ${sighting.date} | Location: ${sighting.location}'),
-                      ),
+                return FutureBuilder<List<dynamic>>(
+                  future: _loadBirdData(context), 
+                  builder: ((context, snapshot) {
+                    if(snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    final birdList = snapshot.data ?? [];
+
+                    return ListView.builder(
+                      itemCount: sightingsData.mySightings.length,
+                      itemBuilder: ((context, index) {
+                        final sighting = sightingsData.mySightings[index];
+                        return Dismissible(
+                          key: ValueKey('${sighting.species}_$index'),
+                          onDismissed: (direction) {
+                            sightingsData.removeSighting(sighting);
+                          },
+                          child: ListTile(
+                            leading: Text('🪶'),
+                            title: Text('${sighting.commonName} | ${sighting.species}'),
+                            subtitle: Text('Seen ${sighting.date} | Location: ${sighting.location}'),
+                            trailing: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                TextEditingController txtDate = TextEditingController();
+                                TextEditingController txtLocation = TextEditingController();
+                                txtDate.text = sighting.date;
+                                txtLocation.text = sighting.location;
+
+
+
+                                // pop up dialog
+                                // auto-fill their location and date
+                              },
+                            ),
+                            onTap: () async {
+                              Bird? sightedBird = findBirdInfo(birdList, sighting.species);
+
+                              sightedBird ??= Bird(
+                                commonName: sighting.commonName, 
+                                species: sighting.species, 
+                                genus: 'Unknown', 
+                                order: 'Unknown', 
+                                family: 'Unknown',
+                              );
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => IndividualBirdScreen(bird: sightedBird!),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      })
                     );
                   })
-                )
-              );
-            },
+                );
+              },
+            ),
           ),
           FooterWidget(isOnHomePage: false),
         ],

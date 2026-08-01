@@ -14,5 +14,11 @@ class BirdDetails {
     required this.description
   });
 
-  void operator [](String other) {}
+  factory BirdDetails.fromJson(Map<String, dynamic> json) {
+    return BirdDetails(
+      bird: Bird.fromJson(json['bird'] as Map<String, dynamic>), 
+      imageUrl: json['imageUrl'], 
+      description: json['description']
+    );
+  }
 }
