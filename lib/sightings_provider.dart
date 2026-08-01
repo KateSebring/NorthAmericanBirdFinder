@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lab3/models/sighting.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SightingsProvider with ChangeNotifier {
   final List<Sighting> _mySightings = [];

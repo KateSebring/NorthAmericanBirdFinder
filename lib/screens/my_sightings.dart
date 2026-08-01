@@ -1,14 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lab3/models/bird.dart';
+import 'package:lab3/models/sighting.dart';
 import 'package:lab3/screens/bird_page.dart';
 import 'package:lab3/sightings_provider.dart';
 import 'package:lab3/widgets/footer.dart';
 import 'package:provider/provider.dart';
 
-class MySightingsScreen extends StatelessWidget {
+class MySightingsScreen extends StatefulWidget {
   const MySightingsScreen({super.key});
 
+  @override
+  State<MySightingsScreen> createState() => _MySightingsScreenState();
+}
+
+class _MySightingsScreenState extends State<MySightingsScreen> {
   Future<List<dynamic>> _loadBirdData(BuildContext context) async {
     final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/bird_data.json');
     return jsonDecode(jsonString);
@@ -76,16 +82,62 @@ class MySightingsScreen extends StatelessWidget {
                             subtitle: Text('Seen ${sighting.date} | Location: ${sighting.location}'),
                             trailing: IconButton(
                               icon: Icon(Icons.edit),
-                              onPressed: () {
-                                TextEditingController txtDate = TextEditingController();
-                                TextEditingController txtLocation = TextEditingController();
-                                txtDate.text = sighting.date;
-                                txtLocation.text = sighting.location;
+                              onPressed: () async {
+                                final Sighting? updatedSighting = await showDialog<Sighting>(
+                                  context: context, 
+                                  builder: (BuildContext context) {
+                                    TextEditingController txtDate = TextEditingController(text: sighting.date);
+                                    TextEditingController txtLocation = TextEditingController(text: sighting.location);
 
+                                    return AlertDialog(
+                                      title: Text('Edit Sighting for ${sighting.commonName}'),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          TextField(
+                                            controller: txtLocation,
+                                            decoration: InputDecoration(
+                                              labelText: 'Location Sighted',
+                                            ),
+                                          ),
+                                          TextField(
+                                            controller: txtDate,
+                                            decoration: InputDecoration(
+                                              labelText: 'Date Sighted',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            String newLocation = txtLocation.text;
+                                            String newDate = txtDate.text;
+                                            final newSighting = Sighting(
+                                              commonName: sighting.commonName, species: sighting.species, location: newLocation, date: newDate
+                                            );
+                                            Navigator.of(context).pop(newSighting);
+                                          }, 
+                                          child: Text('Save'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          }, 
+                                          child: Text('Cancel'),
+                                        ),
+                                      ],
+                                    );
 
-
-                                // pop up dialog
-                                // auto-fill their location and date
+                                    
+                                  }
+                                );
+                                if(updatedSighting != null) {
+                                  setState(() {
+                                    sighting.location = updatedSighting.location;
+                                    sighting.date = updatedSighting.date;
+                                  });
+                                }
                               },
                             ),
                             onTap: () async {
