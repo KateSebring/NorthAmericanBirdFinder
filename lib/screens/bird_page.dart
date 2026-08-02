@@ -226,7 +226,36 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
                 String date = txtDate.text;
                 Sighting newSighting = Sighting(commonName: widget.bird.commonName, species: widget.bird.species, location: location, date: date);
                 Provider.of<SightingsProvider>(context, listen: false).addSighting(newSighting);
+                
+                final mainContext = context;
+
                 Navigator.pop(context);
+
+                ScaffoldMessenger.of(mainContext).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.white,),
+                        SizedBox(width: 12,),
+                        Text(
+                          'Sighting for ${widget.bird.commonName} added!',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: Colors.purple[800],
+                    duration: Duration(seconds: 3),
+                    behavior: SnackBarBehavior.floating,
+                    margin: EdgeInsets.only(
+                      bottom: 70.0,
+                      left: 50.0,
+                      right: 50.0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                );
               }, 
               child: Text('Save'),
             ),
