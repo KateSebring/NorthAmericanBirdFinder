@@ -70,6 +70,31 @@ class MySightingsScreen extends StatelessWidget {
                           key: ValueKey('${sighting.species}_$index'),
                           onDismissed: (direction) {
                             sightingsData.removeSighting(sighting);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    Icon(Icons.check_circle, color: Colors.white,),
+                                    SizedBox(width: 12,),
+                                    Text(
+                                      'Sighting for ${sighting.commonName} removed.',
+                                      style: TextStyle(fontSize: 16.0),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: Colors.purple[800],
+                                duration: Duration(seconds: 3),
+                                behavior: SnackBarBehavior.floating,
+                                margin: EdgeInsets.only(
+                                  bottom: 70.0,
+                                  left: 50.0,
+                                  right: 50.0,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                            );
                           },
                           child: ListTile(
                             leading: Text('🪶'),
@@ -162,6 +187,7 @@ class MySightingsScreen extends StatelessWidget {
                 );
               },
             ),
+          ),
           ),
           FooterWidget(isOnHomePage: false),
         ],
