@@ -14,6 +14,11 @@ class Sighting {
   };
 
   factory Sighting.fromJson(Map<String, dynamic> json) {
-    return Sighting(commonName: json['commonName'], species: json['species'], location: json['location'], date: json['date']);
+    return Sighting(
+      commonName: json['commonName'], 
+      species: json['species'], 
+      location: json['location'], 
+      date: json['date']
+    );
   }
 }

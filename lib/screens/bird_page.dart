@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lab3/models/sighting.dart';
@@ -9,17 +8,11 @@ import '../models/bird.dart';
 import '../models/bird_details.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class IndividualBirdScreen extends StatefulWidget {
+class IndividualBirdScreen extends StatelessWidget {
   final Bird bird;
+  Future<BirdDetails> get birdDetails => loadBirdDetails(bird);
 
   const IndividualBirdScreen({super.key, required this.bird});
-
-  @override
-  State<IndividualBirdScreen> createState() => _IndividualBirdScreenState();
-}
-
-class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
-  late Future<BirdDetails> birdDetails;
 
   Future<BirdDetails> loadBirdDetails(Bird bird) async {
     final imageUrl = await fetchBirdImage(bird.species);
@@ -91,16 +84,10 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    birdDetails = loadBirdDetails(widget.bird);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.bird.commonName),
+        title: Text(bird.commonName),
         backgroundColor: Colors.purple[800],
         foregroundColor: Colors.white,
       ),
@@ -140,32 +127,32 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
                   else
                     const Text('No image available'),
                   Text(
-                    widget.bird.commonName,
+                    bird.commonName,
                     style: TextStyle(
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    widget.bird.species,
+                    bird.species,
                     style: TextStyle(
                       fontSize: 25.0,
                     ),
                   ),
                   Text(
-                    'Order: ${widget.bird.order}',
+                    'Order: ${bird.order}',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
                     ),
                   ),
                   Text(
-                    'Family: ${widget.bird.family}',
+                    'Family: ${bird.family}',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
                     ),
                   ),
                   Text(
-                    'Genus: ${widget.bird.genus}',
+                    'Genus: ${bird.genus}',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
                     ),
@@ -193,7 +180,7 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
       ),
     );
   }
-  
+
   void _showSightingDialog(BuildContext context) {
     showDialog(
       context: context, 
@@ -201,7 +188,7 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
         TextEditingController txtLocation = TextEditingController();
         TextEditingController txtDate = TextEditingController();
         return AlertDialog(
-          title: Text('Log Sighting for ${widget.bird.commonName}'),
+          title: Text('Log Sighting for ${bird.commonName}'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -224,7 +211,7 @@ class _IndividualBirdScreenState extends State<IndividualBirdScreen> {
               onPressed: () {
                 String location = txtLocation.text;
                 String date = txtDate.text;
-                Sighting newSighting = Sighting(commonName: widget.bird.commonName, species: widget.bird.species, location: location, date: date);
+                Sighting newSighting = Sighting(commonName: bird.commonName, species: bird.species, location: location, date: date);
                 Provider.of<SightingsProvider>(context, listen: false).addSighting(newSighting);
                 
                 final mainContext = context;
